@@ -1,19 +1,27 @@
 <header class="header">
-  <div class="container">
-    <nav class="nav">
-      <a class="nav-logo" href="./index.html" aria-label="Site logo">
-        <svg class="nav-logo-icon" width="100" height="30">
-          <use href="{=$icon-path}"></use>
-        </svg>
+  <div class="header__container container">
+      <a href="#" class="header__logo">
+          Electro-Sense
       </a>
-      <ul class="nav-list">
-        <li class="nav-item">
-          <a class="nav-link {=$highlight-act}" href="./page-2.html">Page 2</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link {=$highlight-curr}" href="./page-3.html">Page 3</a>
-        </li>
-      </ul>
-    </nav>
+
+      <button class="header__burger" id="burgerBtn" aria-label="Открыть меню">
+          <i data-lucide="menu"></i>
+      </button>
+
+      <nav class="header__nav" id="mobileMenu">
+          <button class="header__close" id="closeBtn" aria-label="Закрыть меню">
+              <i data-lucide="x"></i>
+          </button>
+
+          <ul class="header__list">
+              <li class="header__item"><a href="#" class="header__link">Главная</a></li>
+              <li class="header__item"><a href="#technology" class="header__link">Технологии</a></li>
+              <li class="header__item"><a href="#learning" class="header__link">Обучение</a></li>
+              <li class="header__item"><a href="#opportunities" class="header__link">Перспективы</a></li>
+              <li class="header__item"><a href="#reviews" class="header__link">Отзывы</a></li>
+              <li class="header__item"><a href="#faq" class="header__link">FAQ</a></li>
+          </ul>
+          <a href="#contact" class="header__cta btn">Связаться</a>
+      </nav>
   </div>
 </header>
