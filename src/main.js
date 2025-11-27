@@ -106,3 +106,63 @@ document.addEventListener('DOMContentLoaded', () => {
       });
   }
 });
+// === 7. ФОРМА И КАПЧА ===
+const regForm = document.getElementById('regForm');
+const formSuccess = document.getElementById('formSuccess');
+const captchaLabel = document.getElementById('captchaLabel');
+const captchaInput = document.getElementById('captcha');
+const captchaError = document.getElementById('captchaError');
+const submitBtn = document.getElementById('submitBtn');
+
+// Генерация капчи
+let captchaResult = 0;
+function generateCaptcha() {
+    const num1 = Math.floor(Math.random() * 10) + 1; // 1-10
+    const num2 = Math.floor(Math.random() * 10) + 1; // 1-10
+    captchaResult = num1 + num2;
+    if(captchaLabel) {
+        captchaLabel.textContent = `Решите пример: ${num1} + ${num2} = ?`;
+    }
+}
+
+// Запускаем при загрузке
+if (regForm) {
+    generateCaptcha();
+
+    regForm.addEventListener('submit', (e) => {
+        e.preventDefault(); // Остановить перезагрузку
+
+        // 1. Проверка капчи
+        if (parseInt(captchaInput.value) !== captchaResult) {
+            captchaError.style.display = 'block';
+            captchaInput.style.borderColor = '#ef4444';
+            // Трясем поле (анимация через JS для простоты)
+            captchaInput.animate([
+                { transform: 'translateX(0)' },
+                { transform: 'translateX(-5px)' },
+                { transform: 'translateX(5px)' },
+                { transform: 'translateX(0)' }
+            ], { duration: 300 });
+            return;
+        }
+
+        // Если капча верна, убираем ошибку
+        captchaError.style.display = 'none';
+        captchaInput.style.borderColor = '#10B981';
+
+        // 2. Имитация отправки
+        const originalText = submitBtn.innerText;
+        submitBtn.innerText = 'Обработка данных...';
+        submitBtn.disabled = true;
+        submitBtn.style.opacity = '0.7';
+
+        setTimeout(() => {
+            // 3. Успех
+            regForm.style.display = 'none'; // Скрываем форму
+            formSuccess.style.display = 'block'; // Показываем успех
+
+            // Скролл к сообщению
+            formSuccess.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 2000); // Задержка 2 секунды
+    });
+}
