@@ -1,82 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
-  // 1. Инициализация иконок Lucide
-  if (typeof lucide !== 'undefined') {
-      lucide.createIcons();
-  }
+  console.log("🚀 Скрипт запущен!");
 
-  // 2. ЛОГИКА ПОДСВЕТКИ (Spotlight Effect)
-  // Отслеживаем движение мыши и передаем координаты в CSS
-  const body = document.body;
-
-  document.addEventListener('mousemove', (e) => {
-      const x = e.clientX;
-      const y = e.clientY;
-
-      // Передаем координаты в CSS-переменные
-      body.style.setProperty('--mouse-x', `${x}px`);
-      body.style.setProperty('--mouse-y', `${y}px`);
-  });
-
-  // 3. Хедер: эффект стекла при скролле
-  const header = document.querySelector('.header');
-  window.addEventListener('scroll', () => {
-      if (window.scrollY > 50) {
-          header.classList.add('header--scrolled');
-      } else {
-          header.classList.remove('header--scrolled');
-      }
-  });
-
-  // 4. Мобильное меню (Простой тоггл)
-  const burger = document.querySelector('.header__burger');
-  const nav = document.querySelector('.header__nav');
-
-  if(burger) {
-      burger.addEventListener('click', () => {
-          // В продакшене лучше переключать класс, здесь для простоты меняем стиль
-          const isFlex = nav.style.display === 'flex';
-
-          if (!isFlex) {
-              nav.style.display = 'flex';
-              nav.style.position = 'absolute';
-              nav.style.top = '100%';
-              nav.style.left = '0';
-              nav.style.width = '100%';
-              nav.style.background = '#fff';
-              nav.style.flexDirection = 'column';
-              nav.style.padding = '20px';
-              nav.style.boxShadow = '0 10px 30px rgba(0,0,0,0.1)';
-          } else {
-              nav.style.display = 'none';
-              nav.style.boxShadow = 'none';
-          }
-      });
-  }
-
-  // 5. Анимация появления Hero (Anime.js)
-  if (typeof anime !== 'undefined') {
-      // Анимация текста
-      anime({
-          targets: '.hero__badge, .hero__title, .hero__subtitle, .hero__actions, .hero__stats',
-          translateY: [30, 0],
-          opacity: [0, 1],
-          delay: anime.stagger(100, {start: 200}), // Задержка между элементами
-          easing: 'easeOutQuad',
-          duration: 800
-      });
-
-      // Анимация визуальной части (карточки)
-      anime({
-          targets: '.hero__visual',
-          opacity: [0, 1],
-          scale: [0.95, 1],
-          delay: 800,
-          easing: 'easeOutExpo',
-          duration: 1200
-      });
-  }
-});
-document.addEventListener('DOMContentLoaded', () => {
   // 1. Инициализация иконок Lucide
   if (typeof lucide !== 'undefined') {
       lucide.createIcons();
@@ -99,14 +23,14 @@ document.addEventListener('DOMContentLoaded', () => {
       }
   });
 
-  // 4. МОБИЛЬНОЕ МЕНЮ (Логика Overlay)
+  // 4. МОБИЛЬНОЕ МЕНЮ (Правильная версия с Overlay)
   const burgerBtn = document.getElementById('burgerBtn');
   const closeBtn = document.getElementById('closeBtn');
   const mobileMenu = document.getElementById('mobileMenu');
-  const navLinks = document.querySelectorAll('.header__link'); // Ссылки меню
+  const navLinks = document.querySelectorAll('.header__link');
 
-  // Функция открытия/закрытия
   function toggleMenu() {
+      if (!mobileMenu) return;
       const isOpen = mobileMenu.classList.contains('is-open');
 
       if (isOpen) {
@@ -114,47 +38,55 @@ document.addEventListener('DOMContentLoaded', () => {
           document.body.style.overflow = ''; // Разрешить скролл
       } else {
           mobileMenu.classList.add('is-open');
-          document.body.style.overflow = 'hidden'; // Запретить скролл фона
+          document.body.style.overflow = 'hidden'; // Запретить скролл
       }
   }
 
   if (burgerBtn) burgerBtn.addEventListener('click', toggleMenu);
   if (closeBtn) closeBtn.addEventListener('click', toggleMenu);
 
-  // Закрывать меню при клике на ссылку (UX)
   navLinks.forEach(link => {
       link.addEventListener('click', () => {
-          if (mobileMenu.classList.contains('is-open')) {
+          if (mobileMenu && mobileMenu.classList.contains('is-open')) {
               toggleMenu();
           }
       });
   });
 
-  // 5. COOKIE POP-UP (Логика)
+  // 5. COOKIE POP-UP (С диагностикой)
   const cookiePopup = document.getElementById('cookiePopup');
   const acceptCookieBtn = document.getElementById('acceptCookie');
 
-  // Проверяем, было ли уже согласие
-  const cookiesAccepted = localStorage.getItem('cookiesAccepted');
+  // Проверяем, существует ли HTML элемент
+  if (cookiePopup) {
+      console.log("✅ HTML элемент попапа найден.");
 
-  // Если нет записи в localStorage, показываем попап через 2 секунды
-  if (!cookiesAccepted) {
-      setTimeout(() => {
-          cookiePopup.classList.add('is-visible');
-      }, 2000);
+      // Проверяем запись в памяти
+      const cookiesAccepted = localStorage.getItem('cookiesAccepted');
+      console.log("Статус куки в памяти:", cookiesAccepted);
+
+      // Если еще не приняли - показываем
+      if (!cookiesAccepted) {
+          setTimeout(() => {
+              console.log("⏰ Время вышло, показываем попап!");
+              cookiePopup.classList.add('is-visible');
+          }, 1000); // Появится через 1 секунду
+      } else {
+          console.log("ℹ️ Куки уже были приняты ранее.");
+      }
+
+      // Логика кнопки
+      if (acceptCookieBtn) {
+          acceptCookieBtn.addEventListener('click', () => {
+              localStorage.setItem('cookiesAccepted', 'true');
+              cookiePopup.classList.remove('is-visible');
+          });
+      }
+  } else {
+      console.error("⛔ ОШИБКА: HTML элемент id='cookiePopup' НЕ НАЙДЕН в index.html. Проверь код страницы!");
   }
 
-  // Обработка клика "Принять"
-  if (acceptCookieBtn) {
-      acceptCookieBtn.addEventListener('click', () => {
-          // Сохраняем выбор пользователя
-          localStorage.setItem('cookiesAccepted', 'true');
-          // Скрываем попап
-          cookiePopup.classList.remove('is-visible');
-      });
-  }
-
-  // 6. Анимация появления Hero (Anime.js)
+  // 6. Анимация Hero (Anime.js)
   if (typeof anime !== 'undefined') {
       anime({
           targets: '.hero__badge, .hero__title, .hero__subtitle, .hero__actions, .hero__stats',
